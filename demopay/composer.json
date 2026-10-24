@@ -1,0 +1,9 @@
+{
+  "name": "Real time/demopay-bkash",
+  "description": "DemoPay launcher UI + bKash sandbox checkout via shipu/bkash",
+  "require": {
+    "php": ">=7.4",
+    "shipu/bkash": "^2.0",
+    "vlucas/phpdotenv": "^5.6"
+  }
+}
