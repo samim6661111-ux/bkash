@@ -14,14 +14,31 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+      - name: Unpack project
+        run: |
+          mkdir -p build
+          if ls *.zip >/dev/null 2>&1; then
+            for z in *.zip; do unzip -o "$z" -d build; done
+          else
+            cp index.html package.json capacitor.config.json build/
+          fi
+          if [ ! -f build/index.html ]; then
+            d=$(dirname "$(find build -name index.html | head -1)")
+            cp -r "$d"/. build/
+          fi
       - name: Prepare web files
+        working-directory: build
         run: mkdir -p www && cp index.html www/index.html
-      - run: npm install
-      - run: npx cap add android
-      - run: npx cap sync android
+      - name: Install
+        working-directory: build
+        run: npm install
+      - name: Add Android
+        working-directory: build
+        run: npx cap add android && npx cap sync android
       - name: Build debug APK
+        working-directory: build
         run: cd android && chmod +x gradlew && ./gradlew assembleDebug
       - uses: actions/upload-artifact@v4
         with:
           name: DemoPay-apk
-          path: android/app/build/outputs/ap
+          path: build/android/app/build/outputs/apk/debug/app-debug.apk
